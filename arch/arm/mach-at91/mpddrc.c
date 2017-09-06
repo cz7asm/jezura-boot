@@ -34,6 +34,57 @@ static int ddr2_decodtype_is_seq(const unsigned int base, u32 cr)
 	return 1;
 }
 
+int ddrsdrc_sdr_init(const unsigned int base,
+	    const unsigned int ram_address,
+	    const struct atmel_mpddrc_config *mpddr_value)
+{
+	/* 
+	 * MPDDRC's register layout and config values are backward-compatible
+	 * with older DDRSDRC.
+	 * Reference: SAM9G35 datasheet, 29.4.1 SDR-SDRAM Initialization
+	 */
+	const struct atmel_mpddr *mpddr = (struct atmel_mpddr *)base;
+    int i;
+
+	/* Program the memory device type in the memory device register */
+	writel(mpddr_value->md, &mpddr->md);
+
+	/* Program the configuration register */
+	writel(mpddr_value->cr, &mpddr->cr);
+
+	/* Program the timing registers 0 and 1 */
+	writel(mpddr_value->tpr0, &mpddr->tpr0);
+	writel(mpddr_value->tpr1, &mpddr->tpr1);
+
+	/* A 200 us is provided to precede any signal toggle */
+	udelay(200);
+
+	/* Issue a NOP command */
+	atmel_mpddr_op(mpddr, ATMEL_MPDDRC_MR_MODE_NOP_CMD, ram_address);
+
+	/* Issue an all banks precharge command */
+	atmel_mpddr_op(mpddr, ATMEL_MPDDRC_MR_MODE_PRCGALL_CMD, ram_address);
+
+	/* Eigth CAS before RAS auto-refresh cycles are provided */
+	for (i = 0; i < 8; i++) {
+	    atmel_mpddr_op(mpddr, ATMEL_MPDDRC_MR_MODE_RFSH_CMD, ram_address+i);
+	}
+
+	/*
+	 * A Mode Register set (MRS) cycle is issued to program the
+	 * parameters of the SDR-SDRAM devices.
+	 */
+	writel(ATMEL_MPDDRC_MR_MODE_LMR_CMD, &mpddr->mr);
+	writel(0xcafedede, ram_address);
+
+	/* The application must go into Normal Mode */
+	atmel_mpddr_op(mpddr, ATMEL_MPDDRC_MR_MODE_NORMAL_CMD, ram_address);
+
+	/* Write the refresh rate */
+	writel(mpddr_value->rtr, &mpddr->rtr);
+
+	return 0;
+}
 
 int ddr2_init(const unsigned int base,
 	      const unsigned int ram_address,

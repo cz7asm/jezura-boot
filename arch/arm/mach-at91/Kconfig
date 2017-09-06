@@ -87,6 +87,12 @@ config TARGET_AT91SAM9X5EK
 	select SUPPORT_SPL
 	select BOARD_EARLY_INIT_F
 
+config TARGET_SONIC
+	bool "Honeywell SONIC"
+	select CPU_ARM926EJS
+	select SUPPORT_SPL
+	select BOARD_EARLY_INIT_F
+
 config TARGET_SAMA5D2_PTC
 	bool "SAMA5D2 PTC board"
 	select CPU_V7
@@ -179,6 +185,7 @@ source "board/atmel/at91sam9m10g45ek/Kconfig"
 source "board/atmel/at91sam9n12ek/Kconfig"
 source "board/atmel/at91sam9rlek/Kconfig"
 source "board/atmel/at91sam9x5ek/Kconfig"
+source "board/atmel/sonic/Kconfig"
 source "board/atmel/sama5d2_ptc/Kconfig"
 source "board/atmel/sama5d2_xplained/Kconfig"
 source "board/atmel/sama5d3_xplained/Kconfig"
