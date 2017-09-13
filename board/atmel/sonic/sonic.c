@@ -10,6 +10,7 @@
 #include <asm/arch/at91sam9_smc.h>
 #include <asm/arch/at91_common.h>
 #include <asm/arch/at91_rstc.h>
+#include <asm/arch/at91_wdt.h>
 #include <asm/arch/clk.h>
 #include <asm/arch/gpio.h>
 #include <debug_uart.h>
@@ -30,13 +31,13 @@ DECLARE_GLOBAL_DATA_PTR;
 
 #ifdef CONFIG_LCD
 vidinfo_t panel_info = {
-	.vl_col	= 800,
-	.vl_row = 480,
+	.vl_col	= 480,
+	.vl_row = 272,
 	.vl_clk = 24000000,
 	.vl_sync = LCDC_LCDCFG5_HSPOL | LCDC_LCDCFG5_VSPOL,
 	.vl_bpix = LCD_BPP,
 	.vl_tft = 1,
-	.vl_clk_pol = 1,
+	.vl_clk_pol = 0,
 	.vl_hsync_len = 128,
 	.vl_left_margin = 64,
 	.vl_right_margin = 64,
@@ -100,22 +101,15 @@ static void at91sam9x5ek_lcd_hw_init(void)
 #ifdef CONFIG_LCD_INFO
 void lcd_show_board_info(void)
 {
-	ulong dram_size;
-	int i;
 	char temp[32];
 
 	if (has_lcdc()) {
+		lcd_printf("U-Boot@Sonic, 2017 Petr Buchta\n");
 		lcd_printf("%s\n", U_BOOT_VERSION);
-		lcd_printf("(C) 2012 ATMEL Corp\n");
-		lcd_printf("at91support@atmel.com\n");
 		lcd_printf("%s CPU at %s MHz\n",
 			get_cpu_name(),
 			strmhz(temp, get_cpu_clk_rate()));
-
-		dram_size = 0;
-		for (i = 0; i < CONFIG_NR_DRAM_BANKS; i++)
-			dram_size += gd->bd->bi_dram[i].size;
-		lcd_printf("  %ld MB SDRAM, todo MB FLASH\n", dram_size >> 20);
+		lcd_printf("  %ld MB SDRAM", gd->bd->bi_dram[0].size >> 20);
 	}
 }
 #endif /* CONFIG_LCD_INFO */
@@ -140,6 +134,9 @@ int board_early_init_f(void)
 
 int board_init(void)
 {
+	struct at91_wdt *wdt = (struct at91_wdt *)ATMEL_BASE_WDT;
+	writel(AT91_WDT_MR_WDDIS, &wdt->mr);
+
 	/* arch number of AT91SAM9X5EK-Board */
 	gd->bd->bi_arch_number = MACH_TYPE_AT91SAM9X5EK;
 
