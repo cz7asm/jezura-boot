@@ -57,7 +57,7 @@
 /* SDRAM */
 #define CONFIG_NR_DRAM_BANKS		1
 #define CONFIG_SYS_SDRAM_BASE		0x20000000
-#define CONFIG_SYS_SDRAM_SIZE		0x08000000	/* 128 megs */
+#define CONFIG_SYS_SDRAM_SIZE		0x01000000	/* 16 megs */
 
 #define CONFIG_SYS_INIT_SP_ADDR \
 	(CONFIG_SYS_SDRAM_BASE + 16 * 1024 - GENERATED_GBL_DATA_SIZE)
@@ -103,10 +103,10 @@
 #endif
 #endif
 
-#define CONFIG_SYS_LOAD_ADDR		0x22000000	/* load address */
+#define CONFIG_SYS_LOAD_ADDR		0x20100000	/* load address */
 
-#define CONFIG_SYS_MEMTEST_START	CONFIG_SYS_SDRAM_BASE
-#define CONFIG_SYS_MEMTEST_END		0x26e00000
+#define CONFIG_SYS_MEMTEST_START	CONFIG_SYS_LOAD_ADDR
+#define CONFIG_SYS_MEMTEST_END		(0x21000000-1)
 
 #ifdef CONFIG_SYS_USE_NANDFLASH
 /* bootstrap + u-boot + env + linux in nandflash */
@@ -118,25 +118,17 @@
 				"bootm 0x22000000"
 #elif defined(CONFIG_SYS_USE_SPIFLASH)
 /* bootstrap + u-boot + env + linux in spi flash */
-#define CONFIG_ENV_OFFSET	0x5000
-#define CONFIG_ENV_SIZE		0x3000
+#define CONFIG_ENV_OFFSET	0x6000
+#define CONFIG_ENV_SIZE		0x1000
 #define CONFIG_ENV_SECT_SIZE	0x1000
-#define CONFIG_ENV_SPI_MAX_HZ	30000000
+#define CONFIG_ENV_SPI_MAX_HZ	10000000
+#if 0
 #define CONFIG_BOOTCOMMAND	"sf probe 0; " \
 				"sf read 0x22000000 0x100000 0x300000; " \
 				"bootm 0x22000000"
-#elif defined(CONFIG_SYS_USE_DATAFLASH)
-/* bootstrap + u-boot + env + linux in data flash */
-#define CONFIG_ENV_OFFSET	0x4200
-#define CONFIG_ENV_SIZE		0x4200
-#define CONFIG_ENV_SECT_SIZE	0x210
-#define CONFIG_ENV_SPI_MAX_HZ	30000000
-#define CONFIG_BOOTCOMMAND	"sf probe 0; " \
-				"sf read 0x22000000 0x84000 0x294000; " \
-				"bootm 0x22000000"
-#else /* CONFIG_SYS_USE_MMC */
-/* bootstrap + u-boot + env + linux in mmc */
-#define CONFIG_ENV_SIZE		0x4000
+#else
+#define CONFIG_BOOTCOMMAND ""
+#endif
 #endif
 
 #define CONFIG_SYS_CBSIZE	256
@@ -148,7 +140,7 @@
 /*
  * Size of malloc() pool
  */
-#define CONFIG_SYS_MALLOC_LEN		(512 * 1024 + 0x1000)
+#define CONFIG_SYS_MALLOC_LEN		(256 * 1024 + 0x1000)
 
 /* SPL */
 #define CONFIG_SPL_FRAMEWORK
@@ -161,7 +153,7 @@
 #define CONFIG_SYS_SPL_MALLOC_START	0x20080000
 #define CONFIG_SYS_SPL_MALLOC_SIZE	0x80000
 
-#define CONFIG_SYS_MONITOR_LEN		(512 << 10)
+#define CONFIG_SYS_MONITOR_LEN		(256*1024)
 
 #define CONFIG_SYS_MASTER_CLOCK		132096000
 #define CONFIG_SYS_AT91_PLLA		0x20c73f03
@@ -174,7 +166,7 @@
 
 #elif CONFIG_SYS_USE_SPIFLASH
 #define CONFIG_SPL_SPI_LOAD
-#define CONFIG_SYS_SPI_U_BOOT_OFFS	0x8400
+#define CONFIG_SYS_SPI_U_BOOT_OFFS	0x8000
 
 #endif
 
