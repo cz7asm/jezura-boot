@@ -371,13 +371,21 @@ void lcd_logo_plot(int x, int y)
 		for (i = 0; i < BMP_LOGO_HEIGHT; ++i) {
 			for (j = 0; j < BMP_LOGO_WIDTH; j++) {
 				col16 = bmp_logo_palette[(bmap[j]-16)];
-				fb16[j] =
+#ifdef CONFIG_SONIC_LOGO_ROTATION
+                int w = panel_info.vl_col;
+                int h = panel_info.vl_row;
+				fb16[(h-1-i)*w + (w-1-j)] =
+#else
+                fb16[j] =
+#endif
 					((col16 & 0x000F) << 1) |
 					((col16 & 0x00F0) << 3) |
 					((col16 & 0x0F00) << 4);
 				}
 			bmap += BMP_LOGO_WIDTH;
+#ifndef CONFIG_SONIC_LOGO_ROTATION
 			fb16 += panel_info.vl_col;
+#endif
 		}
 	}
 

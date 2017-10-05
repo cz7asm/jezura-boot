@@ -33,6 +33,7 @@ DECLARE_GLOBAL_DATA_PTR;
 vidinfo_t panel_info = {
 	.vl_col	= 480,
 	.vl_row = 272,
+    .vl_rot = 2,
 	.vl_clk = 24000000,
 	.vl_sync = LCDC_LCDCFG5_HSPOL | LCDC_LCDCFG5_VSPOL,
 	.vl_bpix = LCD_BPP,
@@ -134,6 +135,7 @@ int board_early_init_f(void)
 
 int board_init(void)
 {
+    // DISABLE WATCHDOG
 	struct at91_wdt *wdt = (struct at91_wdt *)ATMEL_BASE_WDT;
 	writel(AT91_WDT_MR_WDDIS, &wdt->mr);
 
