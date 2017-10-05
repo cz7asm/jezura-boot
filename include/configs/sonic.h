@@ -15,7 +15,7 @@
 #define CONFIG_USART_BASE   0xfffff200
 #define CONFIG_USART_ID     0
 
-#define CONFIG_SYS_TEXT_BASE		0x26f00000
+#define CONFIG_SYS_TEXT_BASE		0x20000000
 
 /* ARM asynchronous clock */
 #define CONFIG_SYS_AT91_SLOW_CLOCK	32768
