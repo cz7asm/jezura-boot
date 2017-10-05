@@ -300,7 +300,26 @@ static int do_spi_flash_read_write(int argc, char * const argv[])
 
 		read = strncmp(argv[0], "read", 4) == 0;
 		if (read)
+#ifdef CONFIG_SF_PROGRESS_LOAD
+        {
+            size_t done = 0;
+            size_t chunk = (len+15)/16;
+            printf("Loading image");
+            while(done < len) {
+                if (done+chunk > len)
+                    /* trim the last chunk on overrun*/
+                    chunk = len-done;
+                ret = spi_flash_read(flash, offset+done, chunk, buf+done);
+                if (ret)
+                    break;
+                done += chunk;
+                putc('.');
+            }
+            putc('\n');
+        }
+#else
 			ret = spi_flash_read(flash, offset, len, buf);
+#endif
 		else
 			ret = spi_flash_write(flash, offset, len, buf);
 
