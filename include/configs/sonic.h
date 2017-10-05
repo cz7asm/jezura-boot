@@ -29,7 +29,18 @@
 #define CONFIG_SKIP_LOWLEVEL_INIT
 
 /* general purpose I/O */
+#if 0
 #define CONFIG_ATMEL_LEGACY		/* required until (g)pio is fixed */
+#endif
+
+/* WATCHDOG */
+#if 0
+#ifndef CONFIG_SPL_BUILD
+#define CONFIG_HW_WATCHDOG
+#define CONFIG_AT91SAM9_WATCHDOG
+#define CONFIG_AT91_HW_WDT_TIMEOUT 5
+#endif
+#endif
 
 /* LCD */
 #define LCD_BPP			LCD_COLOR16
